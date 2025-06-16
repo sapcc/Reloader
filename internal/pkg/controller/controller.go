@@ -109,6 +109,7 @@ func (c *Controller) Add(obj interface{}) {
 	} else if secret, ok := obj.(*v1.Secret); ok {
 		logrus.Infof("add: %s/%s", secret.GetNamespace(), secret.GetName())
 	}
+	c.collectors.Added.With(prometheus.Labels{"resource": c.resource}).Inc()
 	c.collectors.QueueSize.With(prometheus.Labels{"resource": c.resource}).Set(float64(c.queue.Len()))
 	switch object := obj.(type) {
 	case *v1.Namespace:
@@ -177,6 +178,7 @@ func (c *Controller) Update(old interface{}, new interface{}) {
 	} else if secret, ok := new.(*v1.Secret); ok {
 		logrus.Infof("update: %s/%s", secret.GetNamespace(), secret.GetName())
 	}
+	c.collectors.Updated.With(prometheus.Labels{"resource": c.resource}).Inc()
 	c.collectors.QueueSize.With(prometheus.Labels{"resource": c.resource}).Set(float64(c.queue.Len()))
 	switch new.(type) {
 	case *v1.Namespace:
@@ -200,6 +202,7 @@ func (c *Controller) Delete(old interface{}) {
 	} else if secret, ok := old.(*v1.Secret); ok {
 		logrus.Infof("delete: %s/%s", secret.GetNamespace(), secret.GetName())
 	}
+	c.collectors.Deleted.With(prometheus.Labels{"resource": c.resource}).Inc()
 	c.collectors.QueueSize.With(prometheus.Labels{"resource": c.resource}).Set(float64(c.queue.Len()))
 	if options.ReloadOnDelete == "true" {
 		if !c.resourceInIgnoredNamespace(old) && c.resourceInSelectedNamespaces(old) && secretControllerInitialized && configmapControllerInitialized {

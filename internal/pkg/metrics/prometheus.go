@@ -15,6 +15,9 @@ type Collectors struct {
 	Errors              *prometheus.CounterVec
 	Requeues            *prometheus.CounterVec
 	Dropped             *prometheus.CounterVec
+	Added               *prometheus.CounterVec
+	Updated             *prometheus.CounterVec
+	Deleted             *prometheus.CounterVec
 }
 
 func NewCollectors() Collectors {
@@ -88,6 +91,37 @@ func NewCollectors() Collectors {
 		},
 	)
 
+	added := prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "reloader",
+			Name:      "added_total",
+			Help:      "Counter of resources added to the queue by Reloader.",
+		},
+		[]string{
+			"resource",
+		},
+	)
+	updated := prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "reloader",
+			Name:      "updated_total",
+			Help:      "Counter of resources updated in the queue by Reloader.",
+		},
+		[]string{
+			"resource",
+		},
+	)
+	deleted := prometheus.NewCounterVec(
+		prometheus.CounterOpts{
+			Namespace: "reloader",
+			Name:      "deleted_total",
+			Help:      "Counter of resources deleted from the queue by Reloader.",
+		},
+		[]string{
+			"resource",
+		},
+	)
+
 	return Collectors{
 		Reloaded:            reloaded,
 		ReloadedByNamespace: reloaded_by_namespace,
@@ -95,6 +129,9 @@ func NewCollectors() Collectors {
 		Errors:              errors,
 		Requeues:            requeues,
 		Dropped:             dropped,
+		Added:               added,
+		Updated:             updated,
+		Deleted:             deleted,
 	}
 }
 
@@ -110,6 +147,9 @@ func SetupPrometheusEndpoint() Collectors {
 	prometheus.MustRegister(collectors.Errors)
 	prometheus.MustRegister(collectors.Requeues)
 	prometheus.MustRegister(collectors.Dropped)
+	prometheus.MustRegister(collectors.Added)
+	prometheus.MustRegister(collectors.Updated)
+	prometheus.MustRegister(collectors.Deleted)
 
 	http.Handle("/metrics", promhttp.Handler())
 
