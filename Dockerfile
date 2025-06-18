@@ -39,6 +39,8 @@ WORKDIR /
 COPY --from=builder /workspace/manager .
 USER 65532:65532
 
+LABEL source_repository="https://github.com/sapcc/Reloader"
+
 # Port for metrics and probes
 EXPOSE 9090
 

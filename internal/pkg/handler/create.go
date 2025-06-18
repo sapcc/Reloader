@@ -22,6 +22,7 @@ func (r ResourceCreatedHandler) Handle() error {
 		logrus.Errorf("Resource creation handler received nil resource")
 	} else {
 		config, _ := r.GetConfig()
+		logrus.Infof("Will create: %s/%s", config.Namespace, config.ResourceName)
 		// Send webhook
 		if options.WebhookUrl != "" {
 			return sendUpgradeWebhook(config, options.WebhookUrl)
