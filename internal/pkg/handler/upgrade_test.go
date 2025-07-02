@@ -1491,18 +1491,16 @@ func TestRollingUpgradeForDeploymentWithConfigmapUsingArs(t *testing.T) {
 	deploymentFuncs := GetDeploymentRollingUpgradeFuncs()
 	collectors := getCollectors()
 
-	orgItemFunc := deploymentFuncs.ItemFunc
-	orgItemsFunc := deploymentFuncs.ItemsFunc
 	itemCalled := 0
 	itemsCalled := 0
 
 	deploymentFuncs.ItemFunc = func(client kube.Clients, namespace string, name string) (runtime.Object, error) {
 		itemCalled++
-		return orgItemFunc(client, namespace, name)
+		return callbacks.GetDeploymentItem(client, namespace, name)
 	}
 	deploymentFuncs.ItemsFunc = func(client kube.Clients, namespace string) []runtime.Object {
 		itemsCalled++
-		return orgItemsFunc(client, namespace)
+		return callbacks.GetDeploymentItems(client, namespace)
 	}
 
 	err := PerformAction(clients, config, deploymentFuncs, collectors, nil, invokeReloadStrategy)
@@ -1542,18 +1540,16 @@ func TestRollingUpgradeForDeploymentWithPatchAndRetryUsingArs(t *testing.T) {
 	assert.True(t, deploymentFuncs.SupportsPatch)
 	assert.NotEmpty(t, deploymentFuncs.PatchTemplatesFunc().AnnotationTemplate)
 
-	orgItemFunc := deploymentFuncs.ItemFunc
-	orgItemsFunc := deploymentFuncs.ItemsFunc
 	itemCalled := 0
 	itemsCalled := 0
 
 	deploymentFuncs.ItemFunc = func(client kube.Clients, namespace string, name string) (runtime.Object, error) {
 		itemCalled++
-		return orgItemFunc(client, namespace, name)
+		return callbacks.GetDeploymentItem(client, namespace, name)
 	}
 	deploymentFuncs.ItemsFunc = func(client kube.Clients, namespace string) []runtime.Object {
 		itemsCalled++
-		return orgItemsFunc(client, namespace)
+		return callbacks.GetDeploymentItems(client, namespace)
 	}
 
 	patchCalled := 0
@@ -2288,18 +2284,16 @@ func TestRollingUpgradeForDaemonSetWithConfigmapUsingArs(t *testing.T) {
 	daemonSetFuncs := GetDaemonSetRollingUpgradeFuncs()
 	collectors := getCollectors()
 
-	orgItemFunc := daemonSetFuncs.ItemFunc
-	orgItemsFunc := daemonSetFuncs.ItemsFunc
 	itemCalled := 0
 	itemsCalled := 0
 
 	daemonSetFuncs.ItemFunc = func(client kube.Clients, namespace string, name string) (runtime.Object, error) {
 		itemCalled++
-		return orgItemFunc(client, namespace, name)
+		return callbacks.GetDaemonSetItem(client, namespace, name)
 	}
 	daemonSetFuncs.ItemsFunc = func(client kube.Clients, namespace string) []runtime.Object {
 		itemsCalled++
-		return orgItemsFunc(client, namespace)
+		return callbacks.GetDaemonSetItems(client, namespace)
 	}
 
 	err := PerformAction(clients, config, daemonSetFuncs, collectors, nil, invokeReloadStrategy)
@@ -2336,18 +2330,16 @@ func TestRollingUpgradeForDaemonSetWithPatchAndRetryUsingArs(t *testing.T) {
 	config := getConfigWithAnnotations(envVarPostfix, arsConfigmapName, shaData, options.ConfigmapUpdateOnChangeAnnotation, options.ConfigmapReloaderAutoAnnotation)
 	daemonSetFuncs := GetDaemonSetRollingUpgradeFuncs()
 
-	orgItemFunc := daemonSetFuncs.ItemFunc
-	orgItemsFunc := daemonSetFuncs.ItemsFunc
 	itemCalled := 0
 	itemsCalled := 0
 
 	daemonSetFuncs.ItemFunc = func(client kube.Clients, namespace string, name string) (runtime.Object, error) {
 		itemCalled++
-		return orgItemFunc(client, namespace, name)
+		return callbacks.GetDaemonSetItem(client, namespace, name)
 	}
 	daemonSetFuncs.ItemsFunc = func(client kube.Clients, namespace string) []runtime.Object {
 		itemsCalled++
-		return orgItemsFunc(client, namespace)
+		return callbacks.GetDaemonSetItems(client, namespace)
 	}
 
 	assert.True(t, daemonSetFuncs.SupportsPatch)
@@ -2523,18 +2515,16 @@ func TestRollingUpgradeForStatefulSetWithConfigmapUsingArs(t *testing.T) {
 	statefulSetFuncs := GetStatefulSetRollingUpgradeFuncs()
 	collectors := getCollectors()
 
-	orgItemFunc := statefulSetFuncs.ItemFunc
-	orgItemsFunc := statefulSetFuncs.ItemsFunc
 	itemCalled := 0
 	itemsCalled := 0
 
 	statefulSetFuncs.ItemFunc = func(client kube.Clients, namespace string, name string) (runtime.Object, error) {
 		itemCalled++
-		return orgItemFunc(client, namespace, name)
+		return callbacks.GetStatefulSetItem(client, namespace, name)
 	}
 	statefulSetFuncs.ItemsFunc = func(client kube.Clients, namespace string) []runtime.Object {
 		itemsCalled++
-		return orgItemsFunc(client, namespace)
+		return callbacks.GetStatefulSetItems(client, namespace)
 	}
 
 	err := PerformAction(clients, config, statefulSetFuncs, collectors, nil, invokeReloadStrategy)
@@ -2571,18 +2561,16 @@ func TestRollingUpgradeForStatefulSetWithPatchAndRetryUsingArs(t *testing.T) {
 	config := getConfigWithAnnotations(envVarPostfix, arsConfigmapName, shaData, options.ConfigmapUpdateOnChangeAnnotation, options.ConfigmapReloaderAutoAnnotation)
 	statefulSetFuncs := GetStatefulSetRollingUpgradeFuncs()
 
-	orgItemFunc := statefulSetFuncs.ItemFunc
-	orgItemsFunc := statefulSetFuncs.ItemsFunc
 	itemCalled := 0
 	itemsCalled := 0
 
 	statefulSetFuncs.ItemFunc = func(client kube.Clients, namespace string, name string) (runtime.Object, error) {
 		itemCalled++
-		return orgItemFunc(client, namespace, name)
+		return callbacks.GetStatefulSetItem(client, namespace, name)
 	}
 	statefulSetFuncs.ItemsFunc = func(client kube.Clients, namespace string) []runtime.Object {
 		itemsCalled++
-		return orgItemsFunc(client, namespace)
+		return callbacks.GetStatefulSetItems(client, namespace)
 	}
 
 	assert.True(t, statefulSetFuncs.SupportsPatch)
