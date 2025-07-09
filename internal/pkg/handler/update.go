@@ -24,6 +24,7 @@ func (r ResourceUpdatedHandler) Handle() error {
 	} else {
 		config, oldSHAData := r.GetConfig()
 		if config.SHAValue != oldSHAData {
+			logrus.Infof("Will upgrade: %s/%s", config.Namespace, config.ResourceName)
 			// Send a webhook if update
 			if options.WebhookUrl != "" {
 				return sendUpgradeWebhook(config, options.WebhookUrl)

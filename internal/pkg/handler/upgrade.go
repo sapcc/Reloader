@@ -10,6 +10,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/parnurzeal/gorequest"
 	"github.com/prometheus/client_golang/prometheus"
@@ -215,6 +216,7 @@ func rollingUpgrade(clients kube.Clients, config util.Config, upgradeFuncs callb
 
 // PerformAction invokes the deployment if there is any change in configmap or secret data
 func PerformAction(clients kube.Clients, config util.Config, upgradeFuncs callbacks.RollingUpgradeFuncs, collectors metrics.Collectors, recorder record.EventRecorder, strategy invokeStrategy) error {
+	startTime := time.Now()
 	items := upgradeFuncs.ItemsFunc(clients, config.Namespace)
 
 	for _, item := range items {
@@ -225,7 +227,8 @@ func PerformAction(clients kube.Clients, config util.Config, upgradeFuncs callba
 			return err
 		}
 	}
-
+	endTime := time.Now()
+	collectors.ActionTime.With(prometheus.Labels{"resourceType": upgradeFuncs.ResourceType}).Set(float64(endTime.Sub(startTime).Seconds()))
 	return nil
 }
 

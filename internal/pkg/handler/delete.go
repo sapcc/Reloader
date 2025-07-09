@@ -31,6 +31,7 @@ func (r ResourceDeleteHandler) Handle() error {
 		logrus.Errorf("Resource delete handler received nil resource")
 	} else {
 		config, _ := r.GetConfig()
+		logrus.Infof("Will delete: %s/%s", config.Namespace, config.ResourceName)
 		// Send webhook
 		if options.WebhookUrl != "" {
 			return sendUpgradeWebhook(config, options.WebhookUrl)

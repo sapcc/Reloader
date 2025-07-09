@@ -18,6 +18,7 @@ type Collectors struct {
 	Added               *prometheus.CounterVec
 	Updated             *prometheus.CounterVec
 	Deleted             *prometheus.CounterVec
+	ActionTime          *prometheus.GaugeVec
 }
 
 func NewCollectors() Collectors {
@@ -121,6 +122,16 @@ func NewCollectors() Collectors {
 			"resource",
 		},
 	)
+	actionTime := prometheus.NewGaugeVec(
+		prometheus.GaugeOpts{
+			Namespace: "reloader",
+			Name:      "action_time_seconds",
+			Help:      "Gauge for the time taken to perform actions in seconds.",
+		},
+		[]string{
+			"resource",
+		},
+	)
 
 	return Collectors{
 		Reloaded:            reloaded,
@@ -132,6 +143,7 @@ func NewCollectors() Collectors {
 		Added:               added,
 		Updated:             updated,
 		Deleted:             deleted,
+		ActionTime:          actionTime,
 	}
 }
 
@@ -150,6 +162,7 @@ func SetupPrometheusEndpoint() Collectors {
 	prometheus.MustRegister(collectors.Added)
 	prometheus.MustRegister(collectors.Updated)
 	prometheus.MustRegister(collectors.Deleted)
+	prometheus.MustRegister(collectors.ActionTime)
 
 	http.Handle("/metrics", promhttp.Handler())
 
